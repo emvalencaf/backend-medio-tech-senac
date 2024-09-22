@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+enum UserType {
+    STUDENT
+    TEACHER
+    COORDINATOR
+}
+
+model Announcement {
+    id        Int      @id @default(autoincrement())
+    title     String
+    content   String
+    authorId  Int
+    createdAt DateTime
+    classes   Class[]  @relation("AnnouncementClass")
+    author    User     @relation(fields: [authorId], references: [id])
+}
+
+model Class {
+    id                 Int                  @id @default(autoincrement())
+    name               String
+    year               String
+    semester           Int
+    announcements      Announcement[]       @relation("AnnouncementClass")
+    students           User[]               @relation("StudentClasses")
+    TeachingAssignment TeachingAssignment[]
+}
+
+model Subject {
+    id                 Int                  @id @default(autoincrement())
+    name               String
+    description        String
+    TeachingAssignment TeachingAssignment[]
+}
+
+model User {
+    id                 Int                  @id @default(autoincrement())
+    firstName          String
+    lastName           String
+    email              String
+    password           String
+    userType           UserType
+    announcements      Announcement[] // Corrigido para plural
+    classes            Class[]              @relation("StudentClasses")
+    grades             Grade[]
+    TeachingAssignment TeachingAssignment[]
+}
+
+model TeachingAssignment {
+    id        Int @id @default(autoincrement())
+    classId   Int
+    subjectId Int
+    teacherId Int
+
+    class   Class   @relation(fields: [classId], references: [id])
+    subject Subject @relation(fields: [subjectId], references: [id])
+    teacher User    @relation(fields: [teacherId], references: [id])
+
+    @@unique([classId, subjectId]) // Garante que apenas um professor ensine uma disciplina em uma turma
+    Grade Grade[]
+}
+
+model Grade {
+    id        Int        @id @default(autoincrement())
+    studentId Int
+    teachingAssignmentId Int
+    grade     GradeScore
+    student   User       @relation(fields: [studentId], references: [id])
+    teachingAssignment TeachingAssignment @relation(fields: [teachingAssignmentId], references: [id])
+}
+
+enum GradeScore {
+    SS
+    S
+    MB
+}
