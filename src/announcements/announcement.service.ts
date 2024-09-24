@@ -16,7 +16,7 @@ export class AnnouncementService {
     constructor(
         private readonly prismaService: PrismaService,
         @Inject('REDIS') private readonly redisClient: Redis,
-    ) { }
+    ) {}
 
     async listenAnnouncement() {
         const subscriber = this.redisClient.duplicate();
