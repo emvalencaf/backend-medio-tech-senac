@@ -9,13 +9,14 @@ import { CreateAnnouncementDTO } from './dtos/create-announcement.dto';
 
 // databases
 import Redis from 'ioredis';
+import { UserType } from '@prisma/client';
 
 @Injectable()
 export class AnnouncementService {
     constructor(
         private readonly prismaService: PrismaService,
         @Inject('REDIS') private readonly redisClient: Redis,
-    ) {}
+    ) { }
 
     async listenAnnouncement() {
         const subscriber = this.redisClient.duplicate();
@@ -52,18 +53,85 @@ export class AnnouncementService {
         });
     }
 
-    async readAnnouncements(classId: number) {
-        return this.prismaService.announcement.findMany({
-            where: {
-                classes: {
+    async readAnnouncements(
+        userId: number,
+        userType: UserType,
+        title?: string,
+        author?: string,
+        order: 'asc' | 'desc' = 'desc',
+        page: number = 1,
+        limit: number = 10,
+    ) {
+        const whereClause: any = {};
+
+        if (userType !== 'COORDINATOR') {
+            if (userType === 'STUDENT') {
+                whereClause.classes = {
                     some: {
-                        id: classId,
+                        students: {
+                            some: {
+                                id: userId,
+                            },
+                        },
+                    },
+                };
+            } else {
+                whereClause.author = {
+                    id: userId,
+                };
+            }
+        }
+
+        if (title) {
+            whereClause.title = {
+                contains: title,
+                mode: 'insensitive',
+            };
+        }
+
+        if (author) {
+            whereClause.author = {
+                contains: author,
+                mode: 'insensitive',
+            };
+        }
+
+        // calc offset pages limit
+        const offset = (page - 1) * limit;
+
+        const announcements = await this.prismaService.announcement.findMany({
+            where: whereClause,
+            orderBy: {
+                createdAt: order, // Ordenação baseada na data de criação
+            },
+            include: {
+                author: {
+                    select: {
+                        lastName: true,
+                        firstName: true,
+                        userType: true,
+                    },
+                },
+                classes: {
+                    select: {
+                        name: true,
+                        semester: true,
+                        year: true,
                     },
                 },
             },
-            orderBy: {
-                createdAt: 'desc',
-            },
+            skip: offset, // Ignora os primeiros N registros
+            take: Number(limit), // Limita o número de resultados
         });
+        // count total announcements
+        const totalAnnouncements = await this.prismaService.announcement.count({
+            where: whereClause,
+        });
+
+        return {
+            data: announcements,
+            currentPage: page,
+            totalPages: Math.ceil(totalAnnouncements / limit),
+        };
     }
 }

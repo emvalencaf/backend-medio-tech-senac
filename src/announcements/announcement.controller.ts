@@ -1,11 +1,14 @@
 // decorators
-import { Controller, Post, Body, Param, Get } from '@nestjs/common';
+import { Controller, Post, Body, Param, Get, Query } from '@nestjs/common';
 
 // services
 import { AnnouncementService } from './announcement.service';
 
 // dtos
 import { CreateAnnouncementDTO } from './dtos/create-announcement.dto';
+import { UserId } from '../decorators/user-id.decorator';
+import { UserRole } from '../decorators/user-type.decorator';
+import { UserType } from '@prisma/client';
 
 @Controller('announcements')
 export class AnnouncementController {
@@ -21,8 +24,24 @@ export class AnnouncementController {
         return this.announcementService.sendAnnouncement(announcement, arrIds);
     }
 
-    @Get('read/:classId')
-    async readAnnouncements(@Param('classId') classId: number) {
-        return this.announcementService.readAnnouncements(Number(classId));
+    @Get('read')
+    async readAnnouncements(
+        @UserId('userId') userId: number,
+        @UserRole('userType') userType: UserType,
+        @Query('title') title?: string,
+        @Query('author') author?: string,
+        @Query('order') order: 'asc' | 'desc' = 'desc',
+        @Query('page') page: number = 1,
+        @Query('limit') limit: number = 10,
+    ) {
+        return this.announcementService.readAnnouncements(
+            Number(userId),
+            userType,
+            title,
+            author,
+            order,
+            Number(page),
+            Number(limit),
+        );
     }
 }
