@@ -1,5 +1,9 @@
 // decorators
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+    BadRequestException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 
 // services
 import { PrismaService } from '../prisma/prisma.service';
@@ -7,6 +11,9 @@ import { PrismaService } from '../prisma/prisma.service';
 // dtos
 import { GetUserByEmailDto } from './dtos/get-user-by-email.dto';
 import { CreateUserDto } from './dtos/create-user.dto';
+
+// libs for authentication
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -29,5 +36,32 @@ export class UserService {
         return user;
     }
 
-    async create(dto: CreateUserDto) {}
+    async create(dto: CreateUserDto) {
+        const { email, password, ...otherFields } = dto;
+
+        // Check if the user already exists by email
+        const existingUser = await this.prismaService.user.findUnique({
+            where: {
+                email,
+            },
+        });
+
+        if (existingUser) {
+            throw new BadRequestException('Email já está sendo usado');
+        }
+
+        const saltRounds = 10;
+
+        // Hash the user's password
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        // Create and return the new user
+        return this.prismaService.user.create({
+            data: {
+                ...otherFields,
+                email,
+                password: hashedPassword,
+            },
+        });
+    }
 }

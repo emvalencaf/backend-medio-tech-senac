@@ -1,28 +1,28 @@
 // decorators
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 // services
 import { PrismaService } from '../prisma/prisma.service';
+import { RedisService } from '../redis/redis.service';
 
 // dtos
 import { CreateAnnouncementDTO } from './dtos/create-announcement.dto';
 
-// databases
-import Redis from 'ioredis';
+// types
 import { UserType } from '@prisma/client';
 
 @Injectable()
 export class AnnouncementService {
     constructor(
         private readonly prismaService: PrismaService,
-        @Inject('REDIS') private readonly redisClient: Redis,
+        private readonly redisService: RedisService,
     ) {}
 
     async listenAnnouncement() {
-        const subscriber = this.redisClient.duplicate();
+        const subscriber = await this.redisService.duplicateClient(); // Usando RedisService
         subscriber.subscribe('announcement_channel');
         subscriber.on('message', (channel, message) => {
-            console.log(`received message at teh ${channel}: ${message}`);
+            console.log(`received message at the ${channel}: ${message}`);
         });
     }
 
@@ -31,9 +31,9 @@ export class AnnouncementService {
         announcement: CreateAnnouncementDTO,
         classesId: number[],
     ) {
-        // Publicar o comunicado usando Redis
-        await this.redisClient.publish(
-            'announcement_chanel',
+        // Publicar o comunicado usando Redis via RedisService
+        await this.redisService.publishMessage(
+            'announcement_channel',
             JSON.stringify(announcement),
         );
 
@@ -123,6 +123,7 @@ export class AnnouncementService {
             skip: offset, // Ignora os primeiros N registros
             take: Number(limit), // Limita o número de resultados
         });
+
         // count total announcements
         const totalAnnouncements = await this.prismaService.announcement.count({
             where: whereClause,
