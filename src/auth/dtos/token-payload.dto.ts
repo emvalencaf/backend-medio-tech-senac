@@ -1,5 +1,5 @@
 import { IsEnum, IsInt, IsString } from 'class-validator';
-import { UserType } from '../../users/enums/user-type.enum';
+import { UserType } from '@prisma/client';
 
 export class TokenPayloadDTO {
     @IsString()
