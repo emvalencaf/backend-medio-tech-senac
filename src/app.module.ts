@@ -1,16 +1,26 @@
+// decorators
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+
+// modules
 import { AnnouncementModule } from './announcements/announcement.module';
 import { ClassModule } from './class/class.module';
-import { AuthGuard } from './guards/auth.guard';
+import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { RedisModule } from './redis/redis.module';
 import { SubjectModule } from './subject/subject.module';
 import { GradeModule } from './grades/grade.module';
+import { NotificationModule } from './notifications/notification.module';
+
+// controllers
+import { AppController } from './app.controller';
+
+// services
+import { AppService } from './app.service';
+
+// guards
+import { AuthGuard } from './guards/auth.guard';
 
 @Module({
     imports: [
@@ -26,6 +36,7 @@ import { GradeModule } from './grades/grade.module';
         RedisModule,
         SubjectModule,
         GradeModule,
+        NotificationModule,
     ],
     controllers: [AppController],
     providers: [

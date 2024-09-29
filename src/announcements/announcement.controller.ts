@@ -10,19 +10,26 @@ import { UserId } from '../decorators/user-id.decorator';
 import { UserRole } from '../decorators/user-type.decorator';
 import { UserType } from '@prisma/client';
 import { Public } from '../decorators/is-public.decorator';
+import { Roles } from '../decorators/roles.decorator';
 
 @Controller('announcements')
 export class AnnouncementController {
     constructor(private readonly announcementService: AnnouncementService) {}
 
+    @Roles(UserType.TEACHER, UserType.COORDINATOR)
     @Post('send/:classIds')
     async sendAnnouncement(
+        @UserId() authorId: number,
         @Param('classIds') classIds: string,
         @Body() announcement: CreateAnnouncementDTO,
     ) {
         const arrIds = classIds.split(',').map((id) => parseInt(id));
 
-        return this.announcementService.sendAnnouncement(announcement, arrIds);
+        return this.announcementService.sendAnnouncement(
+            authorId,
+            announcement,
+            arrIds,
+        );
     }
 
     @Public()
