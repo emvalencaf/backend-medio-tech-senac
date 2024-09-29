@@ -1,10 +1,10 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsInt, IsString } from 'class-validator';
 
 export class CreateClassDTO {
     @IsString()
-    nameClass: string;
+    name: string;
     @IsString()
     year: string;
-    @IsNumber()
+    @IsInt()
     semester: number;
 }

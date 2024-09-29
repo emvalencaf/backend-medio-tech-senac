@@ -1,9 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateClassDTO } from './dto/create-classes.dto';
 
 @Injectable()
 export class ClassService {
     constructor(private readonly prismaService: PrismaService) {}
+
+    // create class
+    async create(classDTO: CreateClassDTO) {
+        return this.prismaService.class.create({
+            data: classDTO,
+        });
+    }
 
     // returns all classes the teacher is related to by proxy (subjects)
     async getByTeacherId(teacherId: number) {
