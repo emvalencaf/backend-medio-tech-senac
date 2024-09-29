@@ -9,6 +9,7 @@ import { UserModule } from './user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { RedisModule } from './redis/redis.module';
+import { SubjectModule } from './subject/subject.module';
 
 @Module({
     imports: [
@@ -22,6 +23,7 @@ import { RedisModule } from './redis/redis.module';
         JwtModule,
         AuthModule,
         RedisModule,
+        SubjectModule,
     ],
     controllers: [AppController],
     providers: [
