@@ -25,11 +25,10 @@ export class RedisService {
         token: string,
         exp: number,
     ): Promise<void> {
-        const ttl = exp - Math.floor(Date.now() / 1000); // calc time to live based on token's expiration
+        const ttl = Math.max(0, exp - Math.floor(Date.now() / 1000)); // calc time to live based on token's expiration
 
-        // store token at redis
         await this.redisClient.set(
-            `revokedToken:${userId}:${token}`,
+            `revokedTokens:${userId}:${token}`,
             'revoked',
             'EX',
             ttl,
@@ -44,11 +43,9 @@ export class RedisService {
 
     // Verificar se token está revogado
     async isTokenRevoked(userId: number, token: string): Promise<boolean> {
-        const exists = await this.redisClient.sismember(
-            `revokedTokens:${userId}`,
-            token,
+        const exists = await this.redisClient.exists(
+            `revokedTokens:${userId}:${token}`, // Verifica se a chave existe
         );
-
-        return exists === 1;
+        return exists === 1; // Se exists for 1, o token está revogado
     }
 }
