@@ -10,6 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { RedisModule } from './redis/redis.module';
 import { SubjectModule } from './subject/subject.module';
+import { GradeModule } from './grades/grade.module';
 
 @Module({
     imports: [
@@ -24,6 +25,7 @@ import { SubjectModule } from './subject/subject.module';
         AuthModule,
         RedisModule,
         SubjectModule,
+        GradeModule,
     ],
     controllers: [AppController],
     providers: [

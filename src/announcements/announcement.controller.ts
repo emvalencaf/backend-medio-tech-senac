@@ -9,6 +9,7 @@ import { CreateAnnouncementDTO } from './dtos/create-announcement.dto';
 import { UserId } from '../decorators/user-id.decorator';
 import { UserRole } from '../decorators/user-type.decorator';
 import { UserType } from '@prisma/client';
+import { Public } from '../decorators/is-public.decorator';
 
 @Controller('announcements')
 export class AnnouncementController {
@@ -24,6 +25,7 @@ export class AnnouncementController {
         return this.announcementService.sendAnnouncement(announcement, arrIds);
     }
 
+    @Public()
     @Get('read')
     async readAnnouncements(
         @UserId('userId') userId: number,
