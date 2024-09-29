@@ -8,6 +8,8 @@ import { ClassService } from './class.service';
 import { Roles } from '../decorators/roles.decorator';
 import { UserType } from '@prisma/client';
 import { CreateClassDTO } from './dto/create-classes.dto';
+import { UserId } from '../decorators/user-id.decorator';
+import { UserRole } from '../decorators/user-type.decorator';
 
 @Controller('classes')
 export class ClassController {
@@ -23,5 +25,11 @@ export class ClassController {
     @Post()
     async create(@Body() classDTO: CreateClassDTO) {
         return this.classService.create(classDTO);
+    }
+
+    @Roles(UserType.STUDENT, UserType.TEACHER)
+    @Get()
+    async getAll(@UserId() userId: number, @UserRole() userType: UserType) {
+        return this.classService.getAll(userId, userType);
     }
 }
