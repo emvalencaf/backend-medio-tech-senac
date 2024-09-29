@@ -24,11 +24,19 @@ export class AuthController {
     }
 
     @Roles(UserType.COORDINATOR) // ONLY COORDINATOR CAN SIGN-UP NEW USERS
+    // @Public()
     @Post('/sign-up')
     async signUp(@Body() signUp: CreateUserDto) {
-        return this.authService.signUp(signUp);
+        const user = await this.authService.signUp(signUp);
+
+        await delete user.password;
+
+        return user;
     }
 
+    // NEED TO FIX
+    // EITHER IN THE LOGIC OF THE REDIS
+    // OR IN THE AUTH GUARD
     @Roles(UserType.COORDINATOR, UserType.STUDENT, UserType.TEACHER)
     @Post('/sign-out')
     async signOut(@UserId() userId: number, @Token() token: string) {

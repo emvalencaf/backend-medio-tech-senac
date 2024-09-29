@@ -80,7 +80,7 @@ export class AuthService {
     }
 
     // sign out an user
-    async signOut(userId: number, token: string): Promise<void> {
+    async signOut(userId: number, token: string): Promise<string> {
         // get token expiration
         const { exp }: TokenPayloadDTO = await this.jwtService.verifyAsync(
             token,
@@ -90,6 +90,8 @@ export class AuthService {
         );
         // set token in the black list on redis (the token will be blacklisted with time to live equal to token's exp)
         await this.redisService.revokeToken(userId, token, exp);
+
+        return 'Token was succefully black listed';
     }
 
     async isTokenRevoked(userId: number, token: string): Promise<boolean> {
