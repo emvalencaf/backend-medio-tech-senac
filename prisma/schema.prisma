@@ -19,20 +19,23 @@ enum UserType {
 }
 
 model Announcement {
-    id        Int      @id @default(autoincrement())
+    id        Int       @id @default(autoincrement())
     title     String
     content   String
     authorId  Int
     createdAt DateTime
-    classes   Class[]  @relation("AnnouncementClass")
-    author    User     @relation(fields: [authorId], references: [id])
+    updatedAt DateTime?
+    classes   Class[]   @relation("AnnouncementClass")
+    author    User      @relation(fields: [authorId], references: [id])
 }
 
 model Class {
     id                 Int                  @id @default(autoincrement())
     name               String
-    year               String
+    year               Int
     semester           Int
+    createdAt          DateTime             @default(now())
+    updatedAt          DateTime?
     announcements      Announcement[]       @relation("AnnouncementClass")
     students           User[]               @relation("StudentClasses")
     TeachingAssignment TeachingAssignment[]
