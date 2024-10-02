@@ -1,11 +1,44 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateClassDTO } from './dto/create-classes.dto';
+import { CreateClassDTO } from './dto/create-class.dto';
 import { UserType } from '@prisma/client';
+import { PartialUpdateClassDTO } from './dto/partial-update-class.dto';
 
 @Injectable()
 export class ClassService {
     constructor(private readonly prismaService: PrismaService) {}
+
+    async getById(classId: number) {
+        return this.prismaService.class.findUnique({
+            where: {
+                id: classId,
+            },
+        });
+    }
+
+    // partial update a class
+    async partialUpdate(classId: number, classDTO: PartialUpdateClassDTO) {
+        const newData = {
+            ...classDTO,
+            updatedAt: new Date(),
+        };
+
+        return this.prismaService.class.update({
+            data: newData,
+            where: {
+                id: classId,
+            },
+        });
+    }
+
+    // delete a class
+    async delete(classId: number) {
+        return this.prismaService.class.delete({
+            where: {
+                id: classId,
+            },
+        });
+    }
 
     // get all classes by userId
     async getAll(
@@ -21,7 +54,7 @@ export class ClassService {
         let whereClause = {};
 
         if (userType === UserType.COORDINATOR) {
-            whereClause = {}; // Coordenadores têm acesso a todas as turmas
+            whereClause = {}; // Coordenadores tem acesso a todas as turmas
         } else if (userType === UserType.TEACHER) {
             whereClause = {
                 TeachingAssignment: {
