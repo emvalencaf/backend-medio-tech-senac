@@ -8,6 +8,9 @@ import {
     Query,
     Patch,
     Delete,
+    ParseBoolPipe,
+    ParseIntPipe,
+    DefaultValuePipe,
 } from '@nestjs/common';
 
 // services
@@ -30,8 +33,8 @@ export class ClassController {
     @Roles(UserType.COORDINATOR, UserType.TEACHER)
     @Get('teachers/:teacherId')
     @ApiOperation({ summary: 'Obter turmas a partir do id do professor' })
-    async getByTeacherId(@Param('teacherId') teacherId: number) {
-        return this.classService.getByTeacherId(Number(teacherId));
+    async getByTeacherId(@Param('teacherId', ParseIntPipe) teacherId: number) {
+        return this.classService.getByTeacherId(teacherId);
     }
 
     @ApiBearerAuth()
@@ -47,18 +50,18 @@ export class ClassController {
     @Patch(':classId')
     @ApiOperation({ summary: 'Atualiza uma turma pelo id da turma' })
     async partialUpdate(
-        @Param('classId') classId: number,
+        @Param('classId', ParseIntPipe) classId: number,
         @Body() classDTO: PartialUpdateClassDTO,
     ) {
-        return this.classService.partialUpdate(Number(classId), classDTO);
+        return this.classService.partialUpdate(classId, classDTO);
     }
 
     @ApiBearerAuth()
     @Roles(UserType.COORDINATOR)
     @Delete(':classId')
     @ApiOperation({ summary: 'Deleta uma turma pelo id da turma' })
-    async delete(@Param('classId') classId: number) {
-        return this.classService.delete(classId);
+    async deleteById(@Param('classId', ParseIntPipe) classId: number) {
+        return this.classService.deleteById(classId);
     }
 
     @ApiBearerAuth()
@@ -67,8 +70,12 @@ export class ClassController {
     @ApiOperation({
         summary: 'Busca os dados de uma turma a parti do id da turma',
     })
-    async getById(@Param('classId') classId: number) {
-        return this.classService.getById(Number(classId));
+    async getById(
+        @Param('classId', ParseIntPipe) classId: number,
+        @Query('showRels', new DefaultValuePipe(false), ParseBoolPipe)
+        showRels: boolean = false,
+    ) {
+        return this.classService.getById(classId, showRels);
     }
 
     @ApiBearerAuth()
@@ -81,14 +88,16 @@ export class ClassController {
     async getAll(
         @UserId() userId: number,
         @UserRole() userType: UserType,
-        @Query('page') page: number = 1,
-        @Query('limit') limit: number = 7,
+        @Query('page') page: string,
+        @Query('limit') limit: string,
     ) {
+        const currentPage = page ? parseInt(page) : undefined;
+        const currentLimit = limit ? parseInt(limit) : 7;
         return this.classService.getAll(
             userId,
             userType,
-            Number(page),
-            Number(limit),
+            currentPage,
+            currentLimit,
         );
     }
 }

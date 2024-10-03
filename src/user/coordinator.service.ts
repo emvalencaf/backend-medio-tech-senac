@@ -6,6 +6,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { UserType } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { PartialUpdateTeachingAssignmentDTO } from './dtos/partial-update-teaching-assignment.dto';
 
 @Injectable()
 export class CoordinatorService {
@@ -48,6 +49,50 @@ export class CoordinatorService {
         });
 
         return { message: 'Student added to class successfully' };
+    }
+
+    async getTeachingAssignmentById(teachingAssignmentId: number) {
+        return this.prismaService.teachingAssignment.findUnique({
+            where: {
+                id: teachingAssignmentId,
+            },
+            include: {
+                teacher: {
+                    select: {
+                        firstName: true,
+                        lastName: true,
+                    },
+                },
+                subject: {
+                    select: {
+                        name: true,
+                    },
+                },
+            },
+        });
+    }
+
+    async deleteTeachingAssignmentById(teachingAssignmentId: number) {
+        return this.prismaService.teachingAssignment.delete({
+            where: {
+                id: teachingAssignmentId,
+            },
+        });
+    }
+
+    async updateAssignTeacherToClass(
+        teachingAssignmentId: number,
+        updateDTO: PartialUpdateTeachingAssignmentDTO,
+    ) {
+        return this.prismaService.teachingAssignment.update({
+            where: {
+                id: teachingAssignmentId,
+            },
+            data: {
+                teacherId: updateDTO.teacherId && Number(updateDTO.teacherId),
+                subjectId: updateDTO.subjectId && Number(updateDTO.subjectId),
+            },
+        });
     }
 
     // assign a teacher to a class and a subject

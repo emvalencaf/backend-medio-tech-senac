@@ -83,7 +83,7 @@ model Grade {
     score                Float?
     avaliation           Int // Número da avaliação, por exemplo: av1, av2, av3
     student              User               @relation(fields: [studentId], references: [id])
-    teachingAssignment   TeachingAssignment @relation(fields: [teachingAssignmentId], references: [id])
+    teachingAssignment   TeachingAssignment @relation(fields: [teachingAssignmentId], references: [id], onDelete: Cascade)
 }
 
 enum GradeScore {

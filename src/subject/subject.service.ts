@@ -6,6 +6,22 @@ import { CreateSubjectDTO } from './dto/create-subject.dto';
 export class SubjectService {
     constructor(private readonly prismaService: PrismaService) {}
 
+    async getAll(excludeByClassId?: number) {
+        return excludeByClassId
+            ? this.prismaService.subject.findMany({
+                  where: {
+                      NOT: {
+                          TeachingAssignment: {
+                              some: {
+                                  classId: excludeByClassId,
+                              },
+                          },
+                      },
+                  },
+              })
+            : this.prismaService.subject.findMany();
+    }
+
     async create(subjectDTO: CreateSubjectDTO) {
         // only one row for subject can exist
         // avoid duplicate subject

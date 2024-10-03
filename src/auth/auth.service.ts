@@ -40,7 +40,7 @@ export class AuthService {
 
         return {
             user: {
-                name: user.firstName,
+                name: user.firstName + ' ' + user.lastName,
                 email: user.email,
             },
             accessToken: accessToken,

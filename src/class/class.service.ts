@@ -8,7 +8,31 @@ import { PartialUpdateClassDTO } from './dto/partial-update-class.dto';
 export class ClassService {
     constructor(private readonly prismaService: PrismaService) {}
 
-    async getById(classId: number) {
+    async getById(classId: number, showRels: boolean = false) {
+        if (showRels)
+            return this.prismaService.class.findUnique({
+                where: {
+                    id: classId,
+                },
+                include: {
+                    TeachingAssignment: {
+                        include: {
+                            subject: {
+                                select: {
+                                    name: true,
+                                },
+                            },
+                            teacher: {
+                                select: {
+                                    firstName: true,
+                                    lastName: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+
         return this.prismaService.class.findUnique({
             where: {
                 id: classId,
@@ -32,7 +56,7 @@ export class ClassService {
     }
 
     // delete a class
-    async delete(classId: number) {
+    async deleteById(classId: number) {
         return this.prismaService.class.delete({
             where: {
                 id: classId,
