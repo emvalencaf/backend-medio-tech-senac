@@ -12,6 +12,22 @@ import { PartialUpdateTeachingAssignmentDTO } from './dtos/partial-update-teachi
 export class CoordinatorService {
     constructor(private readonly prismaService: PrismaService) {}
 
+    // remove a student of a class
+    async removeStudentFromClass(studentId: number, classId: number) {
+        return this.prismaService.user.update({
+            where: {
+                id: studentId,
+            },
+            data: {
+                classes: {
+                    disconnect: {
+                        id: classId, // Remove a relação com a classe
+                    },
+                },
+            },
+        });
+    }
+
     // add a student to a class
     async addStudentToClass(studentId: number, classId: number) {
         // Verifica se o estudante existe

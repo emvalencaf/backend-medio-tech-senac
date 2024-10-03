@@ -18,7 +18,19 @@ export class StudentController {
     async getAll(
         @Query('showRels', new DefaultValuePipe(false), ParseBoolPipe)
         showRels: boolean = false,
+        @Query(
+            'excludeStudentsWithinClass',
+            new DefaultValuePipe(false),
+            ParseBoolPipe,
+        )
+        excludeStudentsWithinClass: boolean = false,
+        @Query('onlyStudentWithClassId')
+        onlyStudentWithClassId?: number,
     ) {
-        return this.studentService.getAll(showRels);
+        return this.studentService.getAll(
+            showRels,
+            excludeStudentsWithinClass,
+            Number(onlyStudentWithClassId),
+        );
     }
 }

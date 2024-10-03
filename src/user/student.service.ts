@@ -5,9 +5,28 @@ import { PrismaService } from '../prisma/prisma.service';
 export class StudentService {
     constructor(private readonly prismaService: PrismaService) {}
 
-    async getAll(showRels: boolean = false) {
+    async getAll(
+        showRels: boolean = false,
+        excludeStudentsWithinClass: boolean = false,
+        onlyStudentWithClassId?: number,
+    ) {
         let rels;
+        let filter;
+        if (excludeStudentsWithinClass)
+            filter = {
+                classes: {
+                    none: {},
+                },
+            };
 
+        if (onlyStudentWithClassId)
+            filter = {
+                classes: {
+                    some: {
+                        id: onlyStudentWithClassId,
+                    },
+                },
+            };
         if (showRels)
             rels = {
                 classes: {
@@ -23,6 +42,7 @@ export class StudentService {
         return this.prismaService.user.findMany({
             where: {
                 userType: 'STUDENT',
+                ...filter,
             },
             select: {
                 id: true,

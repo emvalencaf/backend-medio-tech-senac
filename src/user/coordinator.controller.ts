@@ -76,4 +76,16 @@ export class CoordinatorController {
     ) {
         return this.coordinatorService.addStudentToClass(studentId, classId);
     }
+
+    @Roles(UserType.COORDINATOR)
+    @Patch('/assign-student-class/students/:studentId/classes/:classId')
+    async removeStudentFromClass(
+        @Param('studentId', ParseIntPipe) studentId: number,
+        @Param('classId', ParseIntPipe) classId: number,
+    ) {
+        return this.coordinatorService.removeStudentFromClass(
+            studentId,
+            classId,
+        );
+    }
 }
