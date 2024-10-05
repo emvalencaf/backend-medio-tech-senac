@@ -28,6 +28,7 @@ export class GradeService {
                 TeachingAssignment: {
                     some: {
                         id: teachingAssignmentId,
+                        teacherId,
                     },
                 },
             },
@@ -90,6 +91,7 @@ export class GradeService {
                 userType: UserType.TEACHER,
                 TeachingAssignment: {
                     some: {
+                        id: teachingAssignmentId,
                         teacherId,
                     },
                 },
@@ -136,6 +138,27 @@ export class GradeService {
         });
     }
 
+    async getGradeById(gradeId: number) {
+        return this.prismaService.grade.findUnique({
+            where: {
+                id: gradeId,
+            },
+        });
+    }
+
+    async getAllGradeByTeachingIdAndStudentId(
+        studentId: number,
+        teachingId: number,
+    ) {
+        return this.prismaService.grade.findMany({
+            where: {
+                teachingAssignment: {
+                    id: teachingId,
+                },
+                studentId: studentId,
+            },
+        });
+    }
     // get all mentions by class id
     async getAllByClassId(classId: number, userId: number, userType: UserType) {
         if (userType === UserType.STUDENT)

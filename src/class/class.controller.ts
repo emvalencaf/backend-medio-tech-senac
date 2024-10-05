@@ -65,7 +65,7 @@ export class ClassController {
     }
 
     @ApiBearerAuth()
-    @Roles(UserType.COORDINATOR, UserType.TEACHER)
+    @Roles(UserType.COORDINATOR, UserType.TEACHER, UserType.STUDENT)
     @Get(':classId')
     @ApiOperation({
         summary: 'Busca os dados de uma turma a parti do id da turma',

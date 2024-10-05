@@ -9,13 +9,28 @@ export class StudentService {
         showRels: boolean = false,
         excludeStudentsWithinClass: boolean = false,
         onlyStudentWithClassId?: number,
+        onlyStudentWithTeachingAssignmentId?: number,
     ) {
         let rels;
         let filter;
+
         if (excludeStudentsWithinClass)
             filter = {
                 classes: {
                     none: {},
+                },
+            };
+
+        if (onlyStudentWithTeachingAssignmentId)
+            filter = {
+                classes: {
+                    some: {
+                        TeachingAssignment: {
+                            some: {
+                                id: onlyStudentWithTeachingAssignmentId,
+                            },
+                        },
+                    },
                 },
             };
 

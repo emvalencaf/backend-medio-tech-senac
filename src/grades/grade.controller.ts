@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    ParseIntPipe,
+    Patch,
+    Post,
+} from '@nestjs/common';
 import { GradeService } from './grade.service';
 import { CreateGradeDTO } from './dto/create-grade.dto';
 import { UserId } from '../decorators/user-id.decorator';
@@ -9,6 +17,25 @@ import { UserRole } from '../decorators/user-type.decorator';
 @Controller('grades')
 export class GradeController {
     constructor(private readonly gradeService: GradeService) {}
+
+    @Roles(UserType.STUDENT, UserType.TEACHER)
+    @Get(':gradeId')
+    async getById(@Param('gradeId', ParseIntPipe) gradeId: number) {
+        return this.gradeService.getGradeById(gradeId);
+    }
+
+    @Roles(UserType.STUDENT, UserType.TEACHER)
+    @Get('students/:studentId/assign-teacher-class/:teachingAssignmentId')
+    async getAllGradeByTeachingIdAndStudentId(
+        @Param('studentId', ParseIntPipe) studentId: number,
+        @Param('teachingAssignmentId', ParseIntPipe)
+        teachingAssignmentId: number,
+    ) {
+        return this.gradeService.getAllGradeByTeachingIdAndStudentId(
+            studentId,
+            teachingAssignmentId,
+        );
+    }
 
     @Roles(UserType.TEACHER, UserType.STUDENT)
     @Get('classes/:classId')
@@ -55,6 +82,8 @@ export class GradeController {
         @UserId('teacherId') teacherId: number,
         @Body() gradeDTO: CreateGradeDTO,
     ) {
+        console.log(teacherId);
+        console.log(gradeDTO);
         return this.gradeService.partialUpdate(
             Number(gradeId),
             Number(studentId),

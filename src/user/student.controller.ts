@@ -26,11 +26,14 @@ export class StudentController {
         excludeStudentsWithinClass: boolean = false,
         @Query('onlyStudentWithClassId')
         onlyStudentWithClassId?: number,
+        @Query('onlyStudentWithTeachingAssignmentId')
+        onlyStudentWithTeachingAssignmentId?: number,
     ) {
         return this.studentService.getAll(
             showRels,
             excludeStudentsWithinClass,
             Number(onlyStudentWithClassId),
+            Number(onlyStudentWithTeachingAssignmentId),
         );
     }
 }
