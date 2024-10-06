@@ -24,6 +24,7 @@ CREATE TABLE `_ComunicationClass` (
     `A` INTEGER NOT NULL,
     `B` INTEGER NOT NULL,
 
+    PRIMARY KEY (`A`, `B`),  -- Definir chave primária composta
     UNIQUE INDEX `_ComunicationClass_AB_unique`(`A`, `B`),
     INDEX `_ComunicationClass_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

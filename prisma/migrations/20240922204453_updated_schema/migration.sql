@@ -78,6 +78,7 @@ CREATE TABLE `_AnnouncementClass` (
     `A` INTEGER NOT NULL,
     `B` INTEGER NOT NULL,
 
+    PRIMARY KEY (`A`, `B`),  -- Adicionando chave primária composta
     UNIQUE INDEX `_AnnouncementClass_AB_unique`(`A`, `B`),
     INDEX `_AnnouncementClass_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -87,6 +88,7 @@ CREATE TABLE `_ClassSubjects` (
     `A` INTEGER NOT NULL,
     `B` INTEGER NOT NULL,
 
+    PRIMARY KEY (`A`, `B`),  -- Adicionando chave primária composta
     UNIQUE INDEX `_ClassSubjects_AB_unique`(`A`, `B`),
     INDEX `_ClassSubjects_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -96,6 +98,7 @@ CREATE TABLE `_StudentClasses` (
     `A` INTEGER NOT NULL,
     `B` INTEGER NOT NULL,
 
+    PRIMARY KEY (`A`, `B`),  -- Adicionando chave primária composta
     UNIQUE INDEX `_StudentClasses_AB_unique`(`A`, `B`),
     INDEX `_StudentClasses_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -105,9 +108,11 @@ CREATE TABLE `_TeacherSubjects` (
     `A` INTEGER NOT NULL,
     `B` INTEGER NOT NULL,
 
+    PRIMARY KEY (`A`, `B`),  -- Adicionando chave primária composta
     UNIQUE INDEX `_TeacherSubjects_AB_unique`(`A`, `B`),
     INDEX `_TeacherSubjects_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 
 -- AddForeignKey
 ALTER TABLE `Announcement` ADD CONSTRAINT `Announcement_authorId_fkey` FOREIGN KEY (`authorId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
