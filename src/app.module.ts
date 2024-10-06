@@ -26,7 +26,7 @@ import { AuthGuard } from './guards/auth.guard';
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
-            envFilePath: ['.env.development.local', '.env.development'],
+            envFilePath: ['.env.development.local', '.env.development', '.env'],
         }),
         AnnouncementModule,
         ClassModule,

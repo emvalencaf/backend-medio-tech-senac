@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    ParseIntPipe,
+    Patch,
+    Post,
+    Query,
+} from '@nestjs/common';
 import { SubjectService } from './subject.service';
 import { Roles } from '../decorators/roles.decorator';
 import { UserType } from '@prisma/client';
@@ -7,7 +17,7 @@ import { PartialUpdateSubjectDTO } from './dto/partial-update-subject.dto';
 
 @Controller('subjects')
 export class SubjectController {
-    constructor(private readonly subjectService: SubjectService) { }
+    constructor(private readonly subjectService: SubjectService) {}
 
     @Roles(UserType.COORDINATOR)
     @Post()

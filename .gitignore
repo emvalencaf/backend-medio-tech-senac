@@ -397,6 +397,7 @@ Temporary Items
 .env
 .env.**.**
 .env.**
+backend-deploy.info
 
 dist
 .webpack
