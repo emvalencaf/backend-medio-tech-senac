@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
 
 @Injectable()
@@ -6,10 +6,15 @@ export class RedisService {
     private redisClient: Redis;
     private redisSubscriber: Redis;
 
-    constructor() {
-        this.redisClient = new Redis();
-        this.redisSubscriber = new Redis();
+    constructor(
+        @Inject('REDIS') private readonly redisInstance: Redis, // Injetando a instância de Redis
+    ) {
+        if (!redisInstance) {
+            throw new Error('REDIS instance is not defined!');
+        }
 
+        this.redisClient = redisInstance;
+        this.redisSubscriber = redisInstance.duplicate();
         // Aqui você pode iniciar a escuta de um canal de notificações
     }
 

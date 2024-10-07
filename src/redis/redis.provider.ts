@@ -21,7 +21,20 @@ export const redisProvider = {
                     port,
                 });
             } else {
-                return new Redis(process.env.REDIS_URL || '');
+                const {
+                    REDIS_HOST,
+                    REDIS_USERNAME,
+                    REDIS_PASSWORD,
+                    REDIS_PORT,
+                } = process.env;
+
+                return new Redis({
+                    username: REDIS_USERNAME,
+                    host: REDIS_HOST,
+                    password: REDIS_PASSWORD,
+                    port: Number(REDIS_PORT) || 6379,
+                    tls: {},
+                });
             }
         } catch (error) {
             console.log(error);
