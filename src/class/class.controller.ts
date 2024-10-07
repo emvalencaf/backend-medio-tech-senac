@@ -90,6 +90,7 @@ export class ClassController {
         @UserRole() userType: UserType,
         @Query('page') page: string,
         @Query('limit') limit: string,
+        @Query('noPagination') noPagination: boolean = false,
     ) {
         const currentPage = page ? parseInt(page) : undefined;
         const currentLimit = limit ? parseInt(limit) : 7;
@@ -98,6 +99,7 @@ export class ClassController {
             userType,
             currentPage,
             currentLimit,
+            noPagination,
         );
     }
 }

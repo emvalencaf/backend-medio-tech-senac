@@ -70,6 +70,7 @@ export class ClassService {
         userType: UserType,
         page: number,
         limit: number,
+        noPagination: boolean,
     ) {
         // Calcula o offset para paginação
         const offset = (page - 1) * limit;
@@ -102,6 +103,12 @@ export class ClassService {
             where: whereClause,
         });
 
+        // Set up query filters
+        const queryOptions: any = {
+            skip: noPagination ? undefined : offset, // Apply pagination if noPagination is false
+            take: noPagination ? undefined : limit, // Apply limit if noPagination is false
+        };
+
         // Busca as classes com a paginação aplicada
         const classes = await this.prismaService.class.findMany({
             where: whereClause,
@@ -132,8 +139,7 @@ export class ClassService {
                     },
                 },
             },
-            skip: offset, // Ignora os primeiros N registros
-            take: Number(limit), // Limita o número de resultados
+            ...queryOptions,
         });
 
         // Calcula o total de páginas
@@ -142,8 +148,8 @@ export class ClassService {
         // Retorna a resposta no formato desejado
         return {
             data: classes,
-            currentPage: page,
-            totalPages: totalPages,
+            currentPage: noPagination ? null : page,
+            totalPages: noPagination ? null : totalPages, // Only return totalPages if pagination is applied
         };
     }
 
