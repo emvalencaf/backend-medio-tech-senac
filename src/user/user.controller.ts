@@ -19,8 +19,23 @@ export class UserController {
 
     @Roles(UserType.COORDINATOR)
     @Get()
-    async getAll(@Query('page') page: number, @Query('limit') limit: number) {
-        return this.userService.getAll(Number(page), Number(limit));
+    async getAll(
+        @Query('page') page: number,
+        @Query('limit') limit: number,
+        @Query('name') name?: string,
+        @Query('className') className?: string,
+        @Query('subjectName') subjectName?: string,
+        @Query('userType') userType?: UserType,
+    ) {
+        console.log(userType);
+        return this.userService.getAll(
+            Number(page),
+            Number(limit),
+            name,
+            className,
+            subjectName,
+            userType,
+        );
     }
 
     @Roles(UserType.COORDINATOR)

@@ -23,8 +23,8 @@ export class AuthController {
         return this.authService.signIn(signIn);
     }
 
-    // @Roles(UserType.COORDINATOR) // ONLY COORDINATOR CAN SIGN-UP NEW USERS
-    @Public()
+    @Roles(UserType.COORDINATOR) // ONLY COORDINATOR CAN SIGN-UP NEW USERS -> comment for create user root then uncomment
+    // @Public() // uncomment for create user root that commet
     @Post('/sign-up')
     async signUp(@Body() signUp: CreateUserDto) {
         const user = await this.authService.signUp(signUp);

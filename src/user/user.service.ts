@@ -15,6 +15,7 @@ import { CreateUserDto } from './dtos/create-user.dto';
 // libs for authentication
 import * as bcrypt from 'bcrypt';
 import { PartialUpdateUserDto } from './dtos/partial-update-user.dto';
+import { UserType } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -45,14 +46,96 @@ export class UserService {
         return user;
     }
 
-    async getAll(page: number, limit: number) {
+    async getAll(
+        page: number,
+        limit: number,
+        name?: string,
+        className?: string,
+        subjectName?: string,
+        userType?: UserType,
+    ) {
         // Calcula o offset para paginação
         const offset = (page - 1) * limit;
 
-        // Obtém o número total de classes com o filtro aplicado
-        const totalUsers = await this.prismaService.class.count();
+        // eslint-disable-next-line prefer-const
+        let where: any = {};
 
+        // filter by userType
+        if (userType) {
+            where.userType = userType;
+        }
+
+        // filter by user name
+        if (name) {
+            const splitted_names = name.split(' ');
+
+            const firstName = splitted_names[0];
+            const lastName = splitted_names.filter((_, i) => i !== 0).join(' ');
+            console.log('firstName: ', firstName);
+            console.log('lastName: ', lastName);
+            where = {
+                ...where,
+                firstName,
+            };
+
+            if (lastName)
+                where = {
+                    ...where,
+                    lastName,
+                };
+        }
+
+        // filter user by classes
+        if (className) {
+            if (userType === 'TEACHER') {
+                where.TeachingAssignment = {
+                    some: {
+                        class: {
+                            name: className, // filter teacher by classes they're assigned to
+                        },
+                    },
+                };
+            } else if (userType === 'STUDENT') {
+                where.classes = {
+                    some: {
+                        name: className, // filter students by class name
+                    },
+                };
+            }
+        }
+
+        // filter by subject name
+        if (subjectName) {
+            if (userType === 'STUDENT') {
+                where.classes = {
+                    some: {
+                        TeachingAssignment: {
+                            some: {
+                                subject: {
+                                    name: subjectName,
+                                },
+                            },
+                        },
+                    },
+                };
+            } else if (userType === 'TEACHER') {
+                where.TeachingAssignment = {
+                    some: {
+                        subject: {
+                            name: subjectName,
+                        },
+                    },
+                };
+            }
+        }
+
+        console.log(where);
+
+        // Busca os usuários filtrados
         const users = await this.prismaService.user.findMany({
+            where: {
+                ...where,
+            },
             select: {
                 id: true,
                 firstName: true,
@@ -61,6 +144,13 @@ export class UserService {
             },
             skip: offset, // Ignora os primeiros N registros
             take: Number(limit), // Limita o número de resultados
+        });
+
+        console.log(users);
+
+        // Contagem total de usuários com o filtro aplicado
+        const totalUsers = await this.prismaService.user.count({
+            where: { ...where },
         });
 
         // Calcula o total de páginas
