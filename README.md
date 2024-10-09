@@ -123,3 +123,18 @@ Alunos podem acessar os comunicados através do endpoint:
 /comunicate/read/:classId  
 
 Onde o ID da turma é passado na URL para retornar as mensagens daquela turma.
+
+## Integrantes: 
+
+@emvalencaf  
+
+@romullo99  
+
+@pxxx010  
+
+@iagovieir  
+
+@36priscilapsilva  
+
+@jwavrik  
+
