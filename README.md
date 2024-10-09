@@ -1,7 +1,41 @@
 ## Sistema Escolar 🎓
-Este é um Sistema Escolar desenvolvido com Next.js, React, JavaScript e TypeScript, destinado à gestão acadêmica de turmas, disciplinas, alunos, professores e coordenadores. O sistema oferece um painel administrativo completo para facilitar a gestão educacional.
+Este é um Sistema Escolar desenvolvido em JavaScript (TypeScript), destinado à gestão acadêmica de turmas, disciplinas, alunos, professores e coordenadores. O sistema oferece um painel administrativo completo para facilitar a gestão educacional.
+
+- Features
+    - Autenticação (por `JWT Token`) e autorização (por `roles`)
+        - São três tipos de `roles`: estudantes (`STUDENT`), professores (`TEACHER`) e coordenadores (`COORDINATOR`)
+    - Adicionar/editar/deletar usuários
+        - Somente usuários do tipo coordenadores poderão adicionar/editar e deletar usuários.
+    - Adicionar/editar/deletar disciplinas
+        - Somente usuários do tipo coordenadores poderão adicionar/editar/deletar disciplinas.
+    - Adicionar/editar/deletar turmas
+        - Somente usuários do tipo coordenadores poderão adicionar/edita/deletar turmas.
+    - Adicionar/remover aluno a uma turma
+        - Somente usuários do tipo coordenadores poderão adicionar/remover alunos de uma turma.
+    - Associar/desassociar professores à disciplinas e turmas
+        - Somente usuários do tipo coordenadores poderão associar/desassociar professores à disciplina e turma
+        - Uma turma só pode ter um professor atrelado a uma mesma disciplina.
+    - Atribuir/remover/editar conceito(nota) a aluno
+        - Somente usuários do tipo professores (associados aquela disciplina e turma) poderão atribuir/remover/editar conceito à alunos (pertencente a turma)
+    - Criar comunicados destinados a turma ou turmas
+        - Somente usuários do tipo professor e coordenador poderão criar comunicado
+    - Listar dados de turmas, comunicados, usuários e disciplinas.
+        - Filtragem de dados integrada (ao frontend e backend) apenas para usuários:
+            - é possível filtrar por tipo de usuário, nome da turma, nome do usuário e nome da disciplina.
+                - É necessário especificar o tipo do usuário para o caso de pesquisa de turma e disciplina, pois, a filtragem é feita com base no tipo de usuário.
+        - Paginação implementada para a listagem dos dados
 
 ## 🚀 Tecnologias Utilizadas
+
+O projeto foi desenvolvido inteiramente com JavaScript (TypeScript) e usando as seguintes bibliotecas e frameworks:
+
+- Backend:
+    - ![NestJs](https://img.shields.io/badge/-NestJs-000?&logo=NestJs): framework utilizado para estruturar a aplicação express do backend e padronizá-la em camadas (DTO, Controllers, Services)
+    - ![Prisma](https://img.shields.io/badge/-Prisma-000?&logo=Prisma): ORM utilizado para facilitar a integração entre o backend e o banco de dados. 
+    - ![SQL](https://img.shields.io/badge/-SQL-000?&logo=MySQL): Banco de dados utilizado para persistir os dados relacionais
+    - ![Redis](https://img.shields.io/badge/-Redis-000?&logo=Redis): Banco de dados de chave-valor utilizado para persistir em memória dados como tokens invalidados (pelo logout do usuário, adoção da estratégia blacklist para o logout) e disparo de comunicações em tempo real através da arquitetura pub/sub.
+
+- Frontend
 Next.js  
 
 React  
