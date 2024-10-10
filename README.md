@@ -1,6 +1,8 @@
 ## Sistema Escolar 🎓
 Este é um Sistema Escolar desenvolvido em JavaScript (TypeScript), destinado à gestão acadêmica de turmas, disciplinas, alunos, professores e coordenadores. O sistema oferece um painel administrativo completo para facilitar a gestão educacional.
 
+Entre na demonstração: [clique aqui][https://frontend-medio-tech-senac.vercel.app/login]
+Veja a documentação (SWAGGER) da API: [clique aqui][https://backend-medio-tech-senac.onrender.com/api]
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -27,6 +29,7 @@ Este projeto foi desenvolvido utilizando **JavaScript** (TypeScript) e as seguin
         - 👨‍🎓 Estudantes (`STUDENT`)
         - 👨‍🏫 Professores (`TEACHER`)
         - 👩‍💼 Coordenadores (`COORDINATOR`)
+    - Revogação de `JWT Token` por meio da estratégia blacklist em um banco de dados no Redis.
 
 ### 👥 Gerenciamento de Usuários
 - **Adicionar/editar/deletar usuários**:
