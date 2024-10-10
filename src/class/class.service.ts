@@ -64,7 +64,6 @@ export class ClassService {
         });
     }
 
-    // get all classes by userId
     async getAll(
         userId: number,
         userType: UserType,
@@ -72,14 +71,14 @@ export class ClassService {
         limit: number,
         noPagination: boolean,
     ) {
-        // Calcula o offset para paginação
-        const offset = (page - 1) * limit;
+        // Se não tiver paginação, não use o "skip"
+        const offset = noPagination ? undefined : (page - 1) * limit;
 
-        // Define o filtro de busca com base no tipo de usuário
+        // Define o filtro com base no tipo de usuário
         let whereClause = {};
 
         if (userType === UserType.COORDINATOR) {
-            whereClause = {}; // Coordenadores tem acesso a todas as turmas
+            whereClause = {}; // Coordenadores acessam todas as turmas
         } else if (userType === UserType.TEACHER) {
             whereClause = {
                 TeachingAssignment: {
@@ -98,19 +97,8 @@ export class ClassService {
             };
         }
 
-        // Obtém o número total de classes com o filtro aplicado
-        const totalClasses = await this.prismaService.class.count({
-            where: whereClause,
-        });
-
-        // Set up query filters
+        // Configurar as opções da query
         const queryOptions: any = {
-            skip: noPagination ? undefined : offset, // Apply pagination if noPagination is false
-            take: noPagination ? undefined : limit, // Apply limit if noPagination is false
-        };
-
-        // Busca as classes com a paginação aplicada
-        const classes = await this.prismaService.class.findMany({
             where: whereClause,
             include: {
                 students: {
@@ -139,17 +127,29 @@ export class ClassService {
                     },
                 },
             },
-            ...queryOptions,
-        });
+        };
 
-        // Calcula o total de páginas
-        const totalPages = Math.ceil(totalClasses / limit);
+        // Só adiciona paginação se "noPagination" for falso
+        if (!noPagination) {
+            queryOptions.skip = offset; // "skip" é o offset calculado
+            queryOptions.take = limit; // Limite de registros por página
+        }
 
-        // Retorna a resposta no formato desejado
+        // Buscar as turmas
+        const classes = await this.prismaService.class.findMany(queryOptions);
+
+        // Se "noPagination" for true, não calcula total de páginas
+        const totalClasses = noPagination
+            ? undefined
+            : await this.prismaService.class.count({ where: whereClause });
+        const totalPages = noPagination
+            ? undefined
+            : Math.ceil(totalClasses / limit);
+
         return {
             data: classes,
             currentPage: noPagination ? null : page,
-            totalPages: noPagination ? null : totalPages, // Only return totalPages if pagination is applied
+            totalPages: noPagination ? null : totalPages,
         };
     }
 

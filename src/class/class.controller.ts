@@ -94,6 +94,7 @@ export class ClassController {
     ) {
         const currentPage = page ? parseInt(page) : undefined;
         const currentLimit = limit ? parseInt(limit) : 7;
+
         return this.classService.getAll(
             userId,
             userType,
