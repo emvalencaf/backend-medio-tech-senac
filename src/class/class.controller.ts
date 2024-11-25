@@ -95,12 +95,31 @@ export class ClassController {
         const currentPage = page ? parseInt(page) : undefined;
         const currentLimit = limit ? parseInt(limit) : 7;
 
-        return this.classService.getAll(
-            userId,
-            userType,
-            currentPage,
-            currentLimit,
-            noPagination,
-        );
+        try {
+            // data
+            const data = this.classService.getAll(
+                userId,
+                userType,
+                currentPage,
+                currentLimit,
+                noPagination,
+            );
+
+            console.log(data);
+
+            return data;
+            
+        } catch(err) {
+            
+            // erro log
+            console.log(err);
+            
+            return {
+                data: [],
+                currentPage: 1,
+                totalPages: 1,
+            };
+        }
+        
     }
 }
