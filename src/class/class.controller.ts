@@ -97,7 +97,7 @@ export class ClassController {
 
         try {
             // data
-            const data = this.classService.getAll(
+            const data = await this.classService.getAll(
                 userId,
                 userType,
                 currentPage,
