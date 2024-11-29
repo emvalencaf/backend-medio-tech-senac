@@ -72,7 +72,7 @@ export class ClassService {
         noPagination: boolean,
     ) {
         // Se não tiver paginação, não use o "skip"
-        const offset = noPagination ? undefined : (page - 1) * limit;
+        const offset = noPagination ? 0 : (page - 1) * limit;
 
         // Define o filtro com base no tipo de usuário
         let whereClause = {};

@@ -92,8 +92,14 @@ export class ClassController {
         @Query('limit') limit: string,
         @Query('noPagination') noPagination: boolean = false,
     ) {
-        const currentPage = page ? parseInt(page) : undefined;
-        const currentLimit = limit ? parseInt(limit) : 7;
+        const currentPage =
+            page && !isNaN(parseInt(page)) && parseInt(page) > 0
+                ? parseInt(page)
+                : 1;
+        const currentLimit =
+            limit && !isNaN(parseInt(limit)) && parseInt(limit) > 0
+                ? parseInt(limit)
+                : 7;
 
         try {
             // data
@@ -108,18 +114,14 @@ export class ClassController {
             console.log(data);
 
             return data;
-            
-        } catch(err) {
-            
+        } catch (err) {
             // erro log
             console.log(err);
-            
             return {
                 data: [],
                 currentPage: 1,
                 totalPages: 1,
             };
         }
-        
     }
 }
