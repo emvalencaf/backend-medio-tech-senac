@@ -91,6 +91,7 @@ export class ClassController {
         @Query('page') page: string,
         @Query('limit') limit: string,
         @Query('noPagination') noPagination: boolean = false,
+        @Query('withConcepts') withConcepts: boolean = false,
     ) {
         const currentPage =
             page && !isNaN(parseInt(page)) && parseInt(page) > 0
@@ -109,6 +110,7 @@ export class ClassController {
                 currentPage,
                 currentLimit,
                 noPagination,
+                withConcepts,
             );
 
             console.log(data);

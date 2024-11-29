@@ -70,6 +70,7 @@ export class ClassService {
         page: number,
         limit: number,
         noPagination: boolean,
+        withConcepts: boolean,
     ) {
         // Se não tiver paginação, não use o "skip"
         const offset = noPagination ? 0 : (page - 1) * limit;
@@ -128,6 +129,17 @@ export class ClassService {
                 },
             },
         };
+
+        if (withConcepts) {
+            queryOptions.include.TeachingAssignment.include.Grade = {
+                select: {
+                    id: true,
+                    avaliation: true,
+                    score: true,
+                    grade: true,
+                },
+            };
+        }
 
         // Só adiciona paginação se "noPagination" for falso
         if (!noPagination) {
